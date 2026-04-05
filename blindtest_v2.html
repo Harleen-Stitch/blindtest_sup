@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blindtest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090e;
+  --s1: #111118;
+  --s2: #18181f;
+  --s3: #222230;
+  --acc: #e8d84a;
+  --acc2: #ff4d6d;
+  --acc3: #4dffa0;
+  --txt: #ede9e1;
+  --muted: #5a5a70;
+  --border: rgba(255,255,255,0.06);
+  --font-d: 'Bebas Neue', sans-serif;
+  --font-b: 'DM Sans', sans-serif;
+  --r: 12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:var(--font-b);font-weight:300;min-height:100vh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9000}
+
+/* ─── LAYOUT ─── */
+header{display:flex;align-items:center;justify-content:space-between;padding:24px 36px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
+.logo{font-family:var(--font-d);font-size:2rem;letter-spacing:.06em;color:var(--acc)}
+.logo span{color:var(--txt)}
+.tabs{display:flex;gap:3px;background:var(--s1);padding:3px;border-radius:9px}
+.tab{background:none;border:none;color:var(--muted);font-family:var(--font-b);font-size:.8rem;font-weight:500;padding:7px 16px;border-radius:7px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .2s}
+.tab.active{background:var(--acc);color:var(--bg)}
+.count{font-size:.78rem;color:var(--muted);letter-spacing:.05em}
+
+.view{display:none;padding:36px;max-width:980px;margin:0 auto}
+.view.active{display:block}
+
+/* ─── TYPOGRAPHY ─── */
+.page-title{font-family:var(--font-d);font-size:3.2rem;letter-spacing:.04em;line-height:1;margin-bottom:6px}
+.page-sub{color:var(--muted);font-size:.88rem;margin-bottom:32px}
+
+/* ─── CARDS ─── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+.card+.card{margin-top:16px}
+.card-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:16px}
+
+/* ─── FORM ELEMENTS ─── */
+input,select,textarea{background:var(--s2);border:1px solid var(--border);color:var(--txt);font-family:var(--font-b);font-size:.9rem;font-weight:300;padding:10px 14px;border-radius:8px;outline:none;transition:border-color .2s;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+select option{background:var(--s2)}
+label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);display:block;margin-bottom:5px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* ─── BUTTONS ─── */
+.btn{border:none;font-family:var(--font-b);font-size:.85rem;font-weight:500;padding:10px 20px;border-radius:8px;cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.btn-acc{background:var(--acc);color:var(--bg)}
+.btn-acc:hover{opacity:.88;transform:scale(.99)}
+.btn-acc2{background:var(--acc2);color:#fff}
+.btn-acc2:hover{opacity:.88}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+.btn-big{font-family:var(--font-d);font-size:1.4rem;letter-spacing:.08em;padding:14px 40px;border-radius:10px}
+
+/* ─── BADGES / TAGS ─── */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:500;letter-spacing:.03em}
+.tag-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* ─── SPOTIFY SETUP ─── */
+.spotify-step{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+.spotify-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:500;color:var(--acc);flex-shrink:0;margin-top:2px}
+.step-content h4{font-size:.9rem;font-weight:500;margin-bottom:4px}
+.step-content p{font-size:.82rem;color:var(--muted);line-height:1.5}
+.step-content a{color:var(--acc);text-decoration:none}
+.step-content a:hover{text-decoration:underline}
+
+/* ─── SPOTIFY STATUS ─── */
+.sp-status{display:flex;align-items:center;gap:8px;font-size:.82rem;padding:10px 14px;border-radius:8px;margin-bottom:16px}
+.sp-status.ok{background:rgba(77,255,160,.08);border:1px solid rgba(77,255,160,.2);color:var(--acc3)}
+.sp-status.err{background:rgba(255,77,109,.08);border:1px solid rgba(255,77,109,.2);color:var(--acc2)}
+.sp-status.warn{background:rgba(232,216,74,.08);border:1px solid rgba(232,216,74,.2);color:var(--acc)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ─── IMPORT ZONE ─── */
+.drop-zone{border:1.5px dashed var(--s3);border-radius:var(--r);padding:40px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--acc);background:rgba(232,216,74,.04)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-icon{font-size:2.5rem;margin-bottom:12px;opacity:.4}
+.drop-text{font-size:.9rem;color:var(--muted)}
+.drop-text strong{color:var(--acc)}
+
+/* ─── SONGS TABLE ─── */
+.songs-table{width:100%;border-collapse:collapse}
+.songs-table th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:0 10px 12px;border-bottom:1px solid var(--border)}
+.songs-table td{padding:12px 10px;border-bottom:1px solid var(--border);font-size:.88rem;vertical-align:middle}
+.songs-table tr:last-child td{border-bottom:none}
+.songs-table tr:hover td{background:var(--s2)}
+.themes-cell{display:flex;flex-wrap:wrap;gap:4px}
+
+/* ─── THEME SELECTOR ─── */
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:24px}
+.theme-card{background:var(--s1);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .2s;user-select:none}
+.theme-card:hover{border-color:var(--muted)}
+.theme-card.selected{border-color:var(--acc);background:rgba(232,216,74,.06)}
+.theme-card .tc-name{font-size:.88rem;font-weight:500;margin-bottom:3px}
+.theme-card .tc-count{font-size:.75rem;color:var(--muted)}
+
+/* ─── PLAY SETTINGS ─── */
+.settings-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
+.setting-box{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:16px}
+.setting-box label{font-size:.68rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px;display:block}
+.setting-val{font-family:var(--font-d);font-size:2rem;color:var(--acc);line-height:1;margin-bottom:6px}
+.setting-box input[type=range]{width:100%;margin-top:4px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--s3);border-radius:11px;cursor:pointer;transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--acc)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:var(--bg)}
+
+/* ─── GAME CARD ─── */
+.progress-wrap{margin-bottom:32px}
+.progress-bar{height:2px;background:var(--s2);border-radius:2px;overflow:hidden;margin-top:6px}
+.progress-fill{height:100%;background:var(--acc);transition:width .4s ease}
+.progress-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+
+.game-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:48px;text-align:center;min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.game-card::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(232,216,74,.04) 0%,transparent 70%);pointer-events:none}
+.q-num{font-family:var(--font-d);font-size:6rem;line-height:1;color:rgba(232,216,74,.07);position:absolute;top:16px;left:28px;letter-spacing:-.02em}
+
+/* Hidden state */
+.mystery-icon{font-size:3rem;margin-bottom:20px;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.06);opacity:1}}
+.mystery-txt{font-family:var(--font-d);font-size:3rem;color:var(--muted);letter-spacing:.1em;margin-bottom:8px}
+.hint-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;min-height:32px}
+.hint-badge{background:var(--s2);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:20px;font-size:.8rem;transition:all .3s;opacity:0;transform:translateY(6px)}
+.hint-badge.show{opacity:1;transform:translateY(0);background:rgba(232,216,74,.08);border-color:rgba(232,216,74,.3);color:var(--acc)}
+
+/* Audio progress bar */
+.audio-bar-wrap{width:100%;max-width:320px;margin:16px auto 0}
+.audio-bar{height:3px;background:var(--s3);border-radius:2px;overflow:hidden}
+.audio-fill{height:100%;background:var(--acc2);width:0%;transition:width .1s linear}
+.audio-time{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
+
+/* Revealed state */
+.rev-title{font-family:var(--font-d);font-size:3.8rem;letter-spacing:.03em;line-height:1.05;margin-bottom:8px;animation:revIn .4s cubic-bezier(.22,1,.36,1)}
+.rev-artist{font-size:1.1rem;color:var(--acc);font-style:italic;margin-bottom:16px;animation:revIn .4s .08s cubic-bezier(.22,1,.36,1) both}
+.rev-meta{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;animation:revIn .4s .16s cubic-bezier(.22,1,.36,1) both}
+.rev-cover{width:80px;height:80px;border-radius:8px;object-fit:cover;margin-bottom:16px;animation:revIn .4s cubic-bezier(.22,1,.36,1);box-shadow:0 8px 24px rgba(0,0,0,.5)}
+@keyframes revIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Btn row */
+.btn-row{display:flex;gap:10px;margin-top:28px;justify-content:center;flex-wrap:wrap}
+
+/* Pause overlay */
+.pause-overlay{position:fixed;inset:0;background:rgba(9,9,14,.92);display:none;align-items:center;justify-content:center;z-index:500;flex-direction:column;gap:16px}
+.pause-overlay.active{display:flex}
+.pause-countdown{font-family:var(--font-d);font-size:8rem;color:var(--acc);line-height:1;animation:countPulse .5s ease-in-out}
+@keyframes countPulse{0%{transform:scale(1.2);opacity:.6}100%{transform:scale(1);opacity:1}}
+.pause-label{color:var(--muted);font-size:.9rem;letter-spacing:.1em;text-transform:uppercase}
+
+/* End screen */
+.end-screen{text-align:center;padding:60px 20px;display:none}
+.end-screen.active{display:block}
+.end-big{font-family:var(--font-d);font-size:6rem;color:var(--acc);line-height:1;margin-bottom:8px}
+
+/* Preview badge (no Spotify) */
+.preview-note{font-size:.75rem;color:var(--muted);margin-top:8px;font-style:italic}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BLIND<span>TEST</span></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('setup',this)">Config</button>
+    <button class="tab" onclick="switchTab('library',this)">Bibliothèque</button>
+    <button class="tab" onclick="switchTab('play',this)">Jouer</button>
+  </div>
+  <div class="count" id="hdr-count">0 chanson</div>
+</header>
+
+<!-- ════ SETUP ════ -->
+<div class="view active" id="view-setup">
+  <div class="page-title">CONFIGURATION</div>
+  <div class="page-sub">Importe ton CSV et connecte Spotify pour la lecture audio.</div>
+
+  <!-- CSV Import -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">1 — Import CSV</div>
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".csv" onchange="handleFile(this.files[0])">
+      <div class="drop-icon">📄</div>
+      <div class="drop-text">Glisse ton fichier CSV ici ou <strong>clique pour choisir</strong></div>
+      <div class="drop-text" style="margin-top:6px;font-size:.78rem">Colonnes attendues : <code>Titre, Artiste, Année, Thèmes</code> — thèmes séparés par <code> | </code></div>
+    </div>
+    <div id="import-status" style="margin-top:12px;display:none"></div>
+  </div>
+
+  <!-- Spotify -->
+  <div class="card">
+    <div class="card-title">2 — Connexion Spotify (optionnel — pour la lecture audio)</div>
+    <div id="sp-status-bar"></div>
+
+    <div class="grid2" style="margin-bottom:16px;gap:12px">
+      <div>
+        <label>Client ID Spotify</label>
+        <input type="text" id="sp-client-id" placeholder="ex: a1b2c3d4e5f6..." oninput="saveSpotifyCreds()">
+      </div>
+      <div>
+        <label>Redirect URI</label>
+        <input type="text" id="sp-redirect" placeholder="ex: http://localhost ou URL de cette page" oninput="saveSpotifyCreds()">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-acc" onclick="connectSpotify()">🎵 Connecter Spotify</button>
+      <button class="btn btn-ghost" id="sp-disconnect" onclick="disconnectSpotify()" style="display:none">Déconnecter</button>
+      <span class="preview-note">Sans Spotify : pas de lecture audio, mais le blindtest fonctionne en mode "animateur lit la chanson".</span>
+    </div>
+
+    <details style="margin-top:20px">
+      <summary style="cursor:pointer;font-size:.82rem;color:var(--muted);letter-spacing:.05em">Comment obtenir un Client ID ?</summary>
+      <div style="margin-top:16px">
+        <div class="spotify-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Créer une app Spotify</h4>
+            <p>Va sur <a href="https://developer.spotify.com/dashboard" target="_blank">developer.spotify.com/dashboard</a> → Log in → Create App</p>
+          </div>
+        </div>
+        <div class="spotify-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Configurer l'app</h4>
+            <p>Nom : "Blindtest" (n'importe quoi). Redirect URI : <strong>l'URL exacte de cette page HTML</strong> (ex: <code>file:///chemin/vers/blindtest_v2.html</code> ou ton URL en ligne). Cocher "Web API".</p>
+          </div>
+        </div>
+        <div class="spotify-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Copier le Client ID</h4>
+            <p>Dans les Settings de ton app → copie le <strong>Client ID</strong> → colle-le ici. <strong>Pas besoin du Client Secret.</strong></p>
+          </div>
+        </div>
+        <div class="spotify-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Compte premium requis</h4>
+            <p>Le Web Playback SDK (lecture complète) nécessite Spotify Premium. Sans Premium, l'app utilise les previews 30 secondes via l'API publique.</p>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ════ LIBRARY ════ -->
+<div class="view" id="view-library">
+  <div class="page-title">BIBLIOTHÈQUE</div>
+  <div class="page-sub" id="lib-sub">Importe un CSV pour voir tes chansons.</div>
+
+  <div id="lib-filters" style="display:none;margin-bottom:20px">
+    <div class="grid3" style="gap:10px">
+      <div><label>Rechercher</label><input type="text" id="lib-search" placeholder="Titre ou artiste…" oninput="renderLibrary()"></div>
+      <div><label>Thème</label><select id="lib-theme-filter" onchange="renderLibrary()"><option value="">Tous les thèmes</option></select></div>
+      <div><label>Décennie</label><select id="lib-decade-filter" onchange="renderLibrary()"><option value="">Toutes</option></select></div>
+    </div>
+  </div>
+
+  <div id="lib-table-wrap">
+    <div style="text-align:center;padding:60px;color:var(--muted)">Aucune chanson — importe un CSV dans la Config.</div>
+  </div>
+</div>
+
+<!-- ════ PLAY ════ -->
+<div class="view" id="view-play">
+  <!-- Setup phase -->
+  <div id="play-setup">
+    <div class="page-title">JOUER</div>
+    <div class="page-sub">Choisis les thèmes et configure ton blindtest.</div>
+
+    <!-- Theme selector -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Thèmes</div>
+      <div id="theme-grid" class="theme-grid"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="selectAllThemes()">Tout sélectionner</button>
+        <button class="btn btn-ghost" onclick="clearThemes()">Tout désélectionner</button>
+        <span class="count" id="sel-count" style="line-height:2.2">0 chanson sélectionnée</span>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="card-title">Paramètres</div>
+      <div class="settings-row">
+        <div class="setting-box">
+          <label>Durée extrait</label>
+          <div class="setting-val" id="dur-val">30s</div>
+          <input type="range" id="dur-range" min="5" max="60" step="5" value="30" oninput="updateDur()">
+        </div>
+        <div class="setting-box">
+          <label>Pause entre morceaux</label>
+          <div class="setting-val" id="pause-val">5s</div>
+          <input type="range" id="pause-range" min="0" max="30" step="1" value="5" oninput="updatePause()">
+        </div>
+        <div class="setting-box">
+          <label>Nb de morceaux</label>
+          <div class="setting-val" id="qty-val">20</div>
+          <input type="range" id="qty-range" min="5" max="100" step="5" value="20" oninput="updateQty()">
+        </div>
+        <div class="setting-box">
+          <label>Ordre aléatoire</label>
+          <div class="toggle-row" style="margin-top:12px">
+            <span style="font-size:.88rem">Shuffle</span>
+            <label class="toggle"><input type="checkbox" id="ck-shuffle" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row" style="margin-top:10px">
+            <span style="font-size:.88rem">Indices auto</span>
+            <label class="toggle"><input type="checkbox" id="ck-hints"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center">
+      <button class="btn btn-acc2 btn-big" onclick="startGame()">▶ LANCER LE BLINDTEST</button>
+      <div class="preview-note" id="start-note" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- Game phase -->
+  <div id="play-game" style="display:none">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="q-label">Question 1 / 20</span>
+        <span id="q-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+
+    <div class="game-card" id="game-card">
+      <div class="q-num" id="q-num">1</div>
+
+      <!-- Hidden -->
+      <div id="state-hidden">
+        <div class="mystery-icon">🎵</div>
+        <div class="mystery-txt">???</div>
+        <div class="hint-badges" id="hint-badges"></div>
+        <div class="audio-bar-wrap" id="audio-bar-wrap" style="display:none">
+          <div class="audio-bar"><div class="audio-fill" id="audio-fill"></div></div>
+          <div class="audio-time"><span id="audio-cur">0:00</span><span id="audio-dur">0:30</span></div>
+        </div>
+      </div>
+
+      <!-- Revealed -->
+      <div id="state-revealed" style="display:none">
+        <img id="rev-cover" class="rev-cover" src="" alt="" style="display:none">
+        <div class="rev-title" id="rev-title"></div>
+        <div class="rev-artist" id="rev-artist"></div>
+        <div class="rev-meta" id="rev-meta"></div>
+      </div>
+    </div>
+
+    <div class="btn-row" id="btns-hidden">
+      <button class="btn btn-ghost" id="btn-hint" onclick="showNextHint()">💡 Indice</button>
+      <button class="btn btn-acc btn-big" onclick="revealSong()">RÉVÉLER</button>
+      <button class="btn btn-ghost" id="btn-play-preview" onclick="togglePreview()" style="display:none">▶ Écouter</button>
+    </div>
+    <div class="btn-row" id="btns-revealed" style="display:none">
+      <button class="btn btn-ghost" onclick="stopAudio()">⏹ Stop</button>
+      <button class="btn btn-acc btn-big" onclick="nextSong()">SUIVANT →</button>
+    </div>
+  </div>
+
+  <!-- End -->
+  <div class="end-screen" id="play-end">
+    <div class="end-big">FIN !</div>
+    <div style="color:var(--muted);margin-bottom:32px">Blindtest terminé — bravo à tous !</div>
+    <button class="btn btn-acc2 btn-big" onclick="resetGame()">↺ Rejouer</button>
+  </div>
+</div>
+
+<!-- Pause overlay -->
+<div class="pause-overlay" id="pause-overlay">
+  <div class="pause-label">Prochaine chanson dans</div>
+  <div class="pause-countdown" id="pause-countdown">5</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let songs = [];
+let queue = [];
+let currentIdx = 0;
+let hintIdx = 0;
+let currentHints = [];
+let audioEl = null;
+let audioTimer = null;
+let pauseTimer = null;
+let spToken = null;
+let spPlayer = null;
+let spDeviceId = null;
+let sdkReady = false;
+
+// Settings
+let durSec = 30, pauseSec = 5, qtySongs = 20;
+
+// ══════════════════════════════════════════════
+//  PERSIST
+// ══════════════════════════════════════════════
+function save() {
+  try {
+    localStorage.setItem('bt2_songs', JSON.stringify(songs));
+    localStorage.setItem('bt2_sp_client', document.getElementById('sp-client-id').value);
+    localStorage.setItem('bt2_sp_redirect', document.getElementById('sp-redirect').value);
+  } catch(e) {}
+}
+
+function load() {
+  try {
+    const s = localStorage.getItem('bt2_songs');
+    if (s) songs = JSON.parse(s);
+    const cid = localStorage.getItem('bt2_sp_client');
+    const ruri = localStorage.getItem('bt2_sp_redirect');
+    if (cid) document.getElementById('sp-client-id').value = cid;
+    if (ruri) document.getElementById('sp-redirect').value = ruri;
+
+    // Check if we got a Spotify token from redirect
+    checkSpotifyCallback();
+  } catch(e) {}
+}
+
+function saveSpotifyCreds() { save(); }
+
+// ══════════════════════════════════════════════
+//  CSV IMPORT
+// ══════════════════════════════════════════════
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => parseCSV(e.target.result);
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseCSV(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines.length < 2) { showImportStatus('err', 'Fichier vide ou invalide.'); return; }
+
+  // Detect separator
+  const sep = lines[0].includes(';') ? ';' : ',';
+
+  // Parse header
+  const header = parseCSVLine(lines[0], sep).map(h => h.trim().toLowerCase()
+    .replace(/é|è|ê/g, 'e').replace(/â/g, 'a').replace(/[^a-z0-9]/g, ''));
+
+  const colMap = {};
+  const aliases = {
+    titre: ['titre', 'title', 'track name', 'trackname', 'nom', 'chanson'],
+    artiste: ['artiste', 'artist', 'artist names', 'artistes', 'chanteur'],
+    annee: ['annee', 'year', 'release date', 'releasedate', 'date', 'an'],
+    themes: ['themes', 'theme', 'genre', 'genres', 'categorie', 'categories', 'tags']
+  };
+
+  for (const [field, alts] of Object.entries(aliases)) {
+    for (let i = 0; i < header.length; i++) {
+      if (alts.some(a => header[i].includes(a.replace(/[^a-z0-9]/g,'')))) {
+        colMap[field] = i; break;
+      }
+    }
+  }
+
+  if (colMap.titre === undefined) {
+    showImportStatus('err', `Colonne "Titre" introuvable. Colonnes détectées : ${header.join(', ')}`);
+    return;
+  }
+
+  const newSongs = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i], sep);
+    if (!cols.length || !cols[colMap.titre]?.trim()) continue;
+    const raw = (cols[colMap.themes] || '').trim();
+    // Support | and ; and , as theme separators
+    const themes = raw.split(/\||;|,(?!\d)/).map(t => t.trim()).filter(Boolean);
+    const yearRaw = colMap.annee !== undefined ? (cols[colMap.annee] || '').trim() : '';
+    const year = yearRaw.match(/\d{4}/) ? parseInt(yearRaw.match(/\d{4}/)[0]) : null;
+    newSongs.push({
+      id: i,
+      title: (cols[colMap.titre] || '').trim(),
+      artist: colMap.artiste !== undefined ? (cols[colMap.artiste] || '').trim() : '',
+      year,
+      themes,
+      uri: null, // Will be fetched from Spotify if connected
+      previewUrl: null,
+      coverUrl: null
+    });
+  }
+
+  if (!newSongs.length) { showImportStatus('err', 'Aucune chanson trouvée.'); return; }
+
+  songs = newSongs;
+  save();
+  updateAll();
+  showImportStatus('ok', `✓ ${songs.length} chansons importées avec succès ! (${Object.keys(colMap).join(', ')})`);
+}
+
+function parseCSVLine(line, sep) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; continue; }
+    if (c === sep && !inQ) { result.push(cur); cur = ''; continue; }
+    cur += c;
+  }
+  result.push(cur);
+  return result;
+}
+
+function showImportStatus(type, msg) {
+  const el = document.getElementById('import-status');
+  el.style.display = 'block';
+  const colors = { ok: 'var(--acc3)', err: 'var(--acc2)', warn: 'var(--acc)' };
+  el.innerHTML = `<div style="color:${colors[type]||'var(--txt)'};font-size:.85rem;padding:8px 0">${msg}</div>`;
+}
+
+// ══════════════════════════════════════════════
+//  SPOTIFY AUTH (PKCE)
+// ══════════════════════════════════════════════
+async function connectSpotify() {
+  const clientId = document.getElementById('sp-client-id').value.trim();
+  const redirectUri = document.getElementById('sp-redirect').value.trim();
+  if (!clientId || !redirectUri) {
+    alert('Remplis le Client ID et la Redirect URI d\'abord !');
+    return;
+  }
+
+  // PKCE
+  const verifier = generateVerifier(128);
+  const challenge = await generateChallenge(verifier);
+  localStorage.setItem('bt2_pkce_verifier', verifier);
+  localStorage.setItem('bt2_sp_client', clientId);
+  localStorage.setItem('bt2_sp_redirect', redirectUri);
+
+  const scopes = 'streaming user-read-email user-read-private user-read-playback-state user-modify-playback-state';
+  const url = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge_method=S256&code_challenge=${challenge}&scope=${encodeURIComponent(scopes)}`;
+  window.location = url;
+}
+
+function generateVerifier(len) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  let result = '';
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  arr.forEach(v => result += chars[v % chars.length]);
+  return result;
+}
+
+async function generateChallenge(verifier) {
+  const enc = new TextEncoder().encode(verifier);
+  const hash = await crypto.subtle.digest('SHA-256', enc);
+  return btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+async function checkSpotifyCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (!code) { updateSpotifyStatus(); return; }
+
+  // Clean URL
+  history.replaceState({}, '', window.location.pathname);
+
+  const clientId = localStorage.getItem('bt2_sp_client');
+  const redirectUri = localStorage.getItem('bt2_sp_redirect');
+  const verifier = localStorage.getItem('bt2_pkce_verifier');
+
+  if (!clientId || !verifier) { updateSpotifyStatus(); return; }
+
+  try {
+    const res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: redirectUri,
+        client_id: clientId,
+        code_verifier: verifier
+      })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      spToken = data.access_token;
+      localStorage.setItem('bt2_sp_token', spToken);
+      localStorage.setItem('bt2_sp_token_exp', Date.now() + data.expires_in * 1000);
+      if (data.refresh_token) localStorage.setItem('bt2_sp_refresh', data.refresh_token);
+      initSpotifyPlayer();
+    }
+  } catch(e) { console.error('Spotify auth error', e); }
+  updateSpotifyStatus();
+}
+
+async function refreshSpotifyToken() {
+  const clientId = localStorage.getItem('bt2_sp_client');
+  const refreshToken = localStorage.getItem('bt2_sp_refresh');
+  if (!clientId || !refreshToken) return false;
+  try {
+    const res = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: clientId
+      })
+    });
+    const data = await res.json();
+    if (data.access_token) {
+      spToken = data.access_token;
+      localStorage.setItem('bt2_sp_token', spToken);
+      localStorage.setItem('bt2_sp_token_exp', Date.now() + data.expires_in * 1000);
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function getValidToken() {
+  const exp = parseInt(localStorage.getItem('bt2_sp_token_exp') || '0');
+  if (Date.now() > exp - 60000) {
+    const ok = await refreshSpotifyToken();
+    if (!ok) { spToken = null; }
+  } else {
+    spToken = localStorage.getItem('bt2_sp_token') || null;
+  }
+  return spToken;
+}
+
+function disconnectSpotify() {
+  spToken = null; spPlayer = null; spDeviceId = null; sdkReady = false;
+  localStorage.removeItem('bt2_sp_token');
+  localStorage.removeItem('bt2_sp_token_exp');
+  localStorage.removeItem('bt2_sp_refresh');
+  localStorage.removeItem('bt2_pkce_verifier');
+  updateSpotifyStatus();
+}
+
+function updateSpotifyStatus() {
+  const token = localStorage.getItem('bt2_sp_token');
+  const exp = parseInt(localStorage.getItem('bt2_sp_token_exp') || '0');
+  const valid = token && Date.now() < exp;
+  const bar = document.getElementById('sp-status-bar');
+  const discBtn = document.getElementById('sp-disconnect');
+
+  if (valid) {
+    bar.innerHTML = `<div class="sp-status ok"><span class="dot"></span>Spotify connecté — lecture audio disponible</div>`;
+    discBtn.style.display = '';
+    if (!sdkReady) initSpotifyPlayer();
+  } else if (token) {
+    bar.innerHTML = `<div class="sp-status warn"><span class="dot"></span>Token expiré — reconnecte-toi ou le token se rafraîchira automatiquement</div>`;
+    discBtn.style.display = '';
+  } else {
+    bar.innerHTML = `<div class="sp-status warn"><span class="dot"></span>Spotify non connecté — mode sans audio (l'animateur lit les réponses)</div>`;
+    discBtn.style.display = 'none';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SPOTIFY WEB PLAYBACK SDK
+// ══════════════════════════════════════════════
+function initSpotifyPlayer() {
+  if (sdkReady) return;
+  const script = document.createElement('script');
+  script.src = 'https://sdk.scdn.co/spotify-player.js';
+  document.head.appendChild(script);
+
+  window.onSpotifyWebPlaybackSDKReady = async () => {
+    const token = await getValidToken();
+    if (!token) return;
+    spPlayer = new Spotify.Player({
+      name: 'Blindtest',
+      getOAuthToken: async cb => { cb(await getValidToken()); },
+      volume: 0.8
+    });
+    spPlayer.addListener('ready', ({ device_id }) => {
+      spDeviceId = device_id;
+      sdkReady = true;
+      updateSpotifyStatus();
+    });
+    spPlayer.addListener('not_ready', () => { sdkReady = false; });
+    spPlayer.connect();
+  };
+}
+
+// ══════════════════════════════════════════════
+//  SPOTIFY SEARCH
+// ══════════════════════════════════════════════
+async function searchSpotify(song) {
+  const token = await getValidToken();
+  if (!token) return null;
+  const q = encodeURIComponent(`track:${song.title} artist:${song.artist || ''}`);
+  try {
+    const res = await fetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=1`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    const track = data.tracks?.items?.[0];
+    if (!track) return null;
+    return {
+      uri: track.uri,
+      previewUrl: track.preview_url,
+      coverUrl: track.album?.images?.[1]?.url || track.album?.images?.[0]?.url
+    };
+  } catch(e) { return null; }
+}
+
+async function playSpotify(uri) {
+  const token = await getValidToken();
+  if (!token || !spDeviceId) return false;
+  try {
+    await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${spDeviceId}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uris: [uri], position_ms: 0 })
+    });
+    return true;
+  } catch(e) { return false; }
+}
+
+async function pauseSpotify() {
+  const token = await getValidToken();
+  if (!token) return;
+  try {
+    await fetch(`https://api.spotify.com/v1/me/player/pause`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` }
+    });
+  } catch(e) {}
+}
+
+// ══════════════════════════════════════════════
+//  AUDIO (preview fallback)
+// ══════════════════════════════════════════════
+function playPreviewUrl(url, onEnd) {
+  stopAudio();
+  audioEl = new Audio(url);
+  audioEl.crossOrigin = 'anonymous';
+  audioEl.play().catch(() => {});
+  audioEl.addEventListener('ended', onEnd);
+  audioEl.addEventListener('timeupdate', updateAudioBar);
+  document.getElementById('audio-bar-wrap').style.display = 'block';
+  document.getElementById('audio-dur').textContent = fmtTime(durSec);
+  return audioEl;
+}
+
+function updateAudioBar() {
+  if (!audioEl) return;
+  const pct = Math.min(100, (audioEl.currentTime / durSec) * 100);
+  document.getElementById('audio-fill').style.width = pct + '%';
+  document.getElementById('audio-cur').textContent = fmtTime(audioEl.currentTime);
+}
+
+function stopAudio() {
+  if (audioEl) { audioEl.pause(); audioEl.src = ''; audioEl = null; }
+  if (sdkReady && spPlayer) pauseSpotify();
+  clearTimeout(audioTimer);
+  document.getElementById('audio-bar-wrap').style.display = 'none';
+  document.getElementById('audio-fill').style.width = '0%';
+}
+
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+// ══════════════════════════════════════════════
+//  THEME COLORS
+// ══════════════════════════════════════════════
+const TC = [
+  ['rgba(232,216,74,.12)','rgba(232,216,74,.7)'],
+  ['rgba(255,77,109,.12)','rgba(255,77,109,.7)'],
+  ['rgba(77,255,160,.12)','rgba(77,255,160,.7)'],
+  ['rgba(100,149,255,.12)','rgba(100,149,255,.7)'],
+  ['rgba(255,165,77,.12)','rgba(255,165,77,.7)'],
+  ['rgba(200,100,255,.12)','rgba(200,100,255,.7)'],
+  ['rgba(77,220,255,.12)','rgba(77,220,255,.7)'],
+  ['rgba(255,100,200,.12)','rgba(255,100,200,.7)'],
+];
+const themeColorMap = {};
+let themeColorIdx = 0;
+function themeColor(t) {
+  if (!themeColorMap[t]) {
+    themeColorMap[t] = TC[themeColorIdx % TC.length];
+    themeColorIdx++;
+  }
+  return themeColorMap[t];
+}
+
+// ══════════════════════════════════════════════
+//  UI UPDATES
+// ══════════════════════════════════════════════
+function updateAll() {
+  document.getElementById('hdr-count').textContent = songs.length + (songs.length > 1 ? ' chansons' : ' chanson');
+  renderLibrary();
+  renderThemeGrid();
+  updateSelCount();
+}
+
+function renderLibrary() {
+  const search = (document.getElementById('lib-search')?.value || '').toLowerCase();
+  const tFilter = document.getElementById('lib-theme-filter')?.value || '';
+  const dFilter = document.getElementById('lib-decade-filter')?.value || '';
+
+  // Populate filters
+  const allThemes = [...new Set(songs.flatMap(s => s.themes))].sort();
+  const thSel = document.getElementById('lib-theme-filter');
+  const prevT = thSel?.value;
+  if (thSel) {
+    thSel.innerHTML = '<option value="">Tous les thèmes</option>' + allThemes.map(t => `<option value="${t}" ${t===prevT?'selected':''}>${t}</option>`).join('');
+  }
+  const decades = [...new Set(songs.filter(s => s.year).map(s => Math.floor(s.year/10)*10))].sort();
+  const dSel = document.getElementById('lib-decade-filter');
+  if (dSel) {
+    const prevD = dFilter;
+    dSel.innerHTML = '<option value="">Toutes</option>' + decades.map(d => `<option value="${d}" ${d==prevD?'selected':''}>${d}s</option>`).join('');
+  }
+
+  let filtered = songs;
+  if (search) filtered = filtered.filter(s => s.title.toLowerCase().includes(search) || s.artist.toLowerCase().includes(search));
+  if (tFilter) filtered = filtered.filter(s => s.themes.includes(tFilter));
+  if (dFilter) filtered = filtered.filter(s => s.year && Math.floor(s.year/10)*10 == parseInt(dFilter));
+
+  document.getElementById('lib-sub').textContent = `${filtered.length} / ${songs.length} chanson(s)`;
+  document.getElementById('lib-filters').style.display = songs.length ? '' : 'none';
+
+  const wrap = document.getElementById('lib-table-wrap');
+  if (!songs.length) { wrap.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Aucune chanson — importe un CSV dans la Config.</div>'; return; }
+  if (!filtered.length) { wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Aucun résultat.</div>'; return; }
+
+  wrap.innerHTML = `<table class="songs-table">
+    <thead><tr><th>#</th><th>Titre</th><th>Artiste</th><th>Année</th><th>Thèmes</th></tr></thead>
+    <tbody>${filtered.slice(0,200).map((s,i) => `<tr>
+      <td style="color:var(--muted);font-size:.78rem">${i+1}</td>
+      <td style="font-weight:400">${esc(s.title)}</td>
+      <td style="color:var(--muted);font-style:italic">${esc(s.artist||'—')}</td>
+      <td style="color:var(--muted)">${s.year||'—'}</td>
+      <td><div class="themes-cell">${s.themes.map(t => {
+        const [bg,c] = themeColor(t);
+        return `<span class="badge" style="background:${bg};color:${c}">${esc(t)}</span>`;
+      }).join('')}</div></td>
+    </tr>`).join('')}
+    </tbody></table>${filtered.length > 200 ? `<div style="text-align:center;padding:12px;color:var(--muted);font-size:.8rem">${filtered.length - 200} chansons supplémentaires (filtre pour affiner)</div>` : ''}`;
+}
+
+// Selected themes
+let selectedThemes = new Set();
+function renderThemeGrid() {
+  const allThemes = [...new Set(songs.flatMap(s => s.themes))].sort();
+  if (selectedThemes.size === 0) allThemes.forEach(t => selectedThemes.add(t));
+  const grid = document.getElementById('theme-grid');
+  grid.innerHTML = allThemes.map(t => {
+    const cnt = songs.filter(s => s.themes.includes(t)).length;
+    const [bg, c] = themeColor(t);
+    const sel = selectedThemes.has(t);
+    return `<div class="theme-card ${sel?'selected':''}" onclick="toggleTheme('${esc(t)}')" style="${sel?`border-color:${c};background:${bg}`:''}" data-theme="${esc(t)}">
+      <div class="tc-name">${esc(t)}</div>
+      <div class="tc-count">${cnt} chanson${cnt>1?'s':''}</div>
+    </div>`;
+  }).join('');
+  updateSelCount();
+}
+
+function toggleTheme(t) {
+  if (selectedThemes.has(t)) selectedThemes.delete(t);
+  else selectedThemes.add(t);
+  renderThemeGrid();
+}
+function selectAllThemes() { songs.flatMap(s => s.themes).forEach(t => selectedThemes.add(t)); renderThemeGrid(); }
+function clearThemes() { selectedThemes.clear(); renderThemeGrid(); }
+
+function updateSelCount() {
+  const sel = getSelectedSongs();
+  const qty = Math.min(qtySongs, sel.length);
+  document.getElementById('sel-count').textContent = `${sel.length} chanson${sel.length>1?'s':''} dans la sélection · ${qty} seront jouées`;
+  document.getElementById('start-note').textContent = spToken ? '🎵 Lecture Spotify activée' : '🔇 Mode sans audio — connexion Spotify optionnelle';
+}
+
+function getSelectedSongs() {
+  return songs.filter(s => s.themes.some(t => selectedThemes.has(t)));
+}
+
+// Settings
+function updateDur() {
+  durSec = parseInt(document.getElementById('dur-range').value);
+  document.getElementById('dur-val').textContent = durSec + 's';
+}
+function updatePause() {
+  pauseSec = parseInt(document.getElementById('pause-range').value);
+  document.getElementById('pause-val').textContent = pauseSec + 's';
+}
+function updateQty() {
+  qtySongs = parseInt(document.getElementById('qty-range').value);
+  document.getElementById('qty-val').textContent = qtySongs;
+  updateSelCount();
+}
+
+// ══════════════════════════════════════════════
+//  GAME
+// ══════════════════════════════════════════════
+async function startGame() {
+  let pool = getSelectedSongs();
+  if (!pool.length) { alert('Aucune chanson sélectionnée !'); return; }
+
+  const shuffle = document.getElementById('ck-shuffle').checked;
+  if (shuffle) pool = pool.sort(() => Math.random() - .5);
+  queue = pool.slice(0, qtySongs);
+  currentIdx = 0;
+
+  document.getElementById('play-setup').style.display = 'none';
+  document.getElementById('play-game').style.display = 'block';
+  document.getElementById('play-end').classList.remove('active');
+
+  showQuestion();
+}
+
+async function showQuestion() {
+  if (currentIdx >= queue.length) { endGame(); return; }
+
+  stopAudio();
+  hintIdx = 0;
+  const song = queue[currentIdx];
+  const pct = Math.round(currentIdx / queue.length * 100);
+
+  document.getElementById('q-num').textContent = currentIdx + 1;
+  document.getElementById('q-label').textContent = `Question ${currentIdx+1} / ${queue.length}`;
+  document.getElementById('q-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  // Build hints
+  currentHints = [];
+  if (song.year) currentHints.push({ label: `📅 ${song.year}`, type: 'year' });
+  if (song.themes?.length) currentHints.push({ label: `🏷 ${song.themes[0]}`, type: 'theme' });
+  if (song.artist) currentHints.push({ label: `🎤 ${song.artist}`, type: 'artist' });
+
+  const hintBadges = document.getElementById('hint-badges');
+  hintBadges.innerHTML = currentHints.map((h,i) =>
+    `<span class="hint-badge" id="hb-${i}">${esc(h.label)}</span>`
+  ).join('');
+
+  // State
+  document.getElementById('state-hidden').style.display = 'block';
+  document.getElementById('state-revealed').style.display = 'none';
+  document.getElementById('btns-hidden').style.display = 'flex';
+  document.getElementById('btns-revealed').style.display = 'none';
+  document.getElementById('audio-bar-wrap').style.display = 'none';
+  document.getElementById('btn-hint').style.opacity = '1';
+
+  // Auto-reveal hints?
+  if (document.getElementById('ck-hints').checked) {
+    currentHints.slice(0, -1).forEach((_, i) => {
+      const el = document.getElementById('hb-' + i);
+      if (el) el.classList.add('show');
+    });
+    hintIdx = currentHints.length - 1;
+  }
+
+  // Fetch Spotify info if not already done
+  if (!song.uri && !song._spFetched) {
+    song._spFetched = true;
+    const info = await searchSpotify(song);
+    if (info) { song.uri = info.uri; song.previewUrl = info.previewUrl; song.coverUrl = info.coverUrl; }
+  }
+
+  // Show preview button if available
+  const previewBtn = document.getElementById('btn-play-preview');
+  if (song.previewUrl || (sdkReady && song.uri)) {
+    previewBtn.style.display = '';
+    previewBtn.textContent = '▶ Écouter';
+  } else {
+    previewBtn.style.display = 'none';
+  }
+
+  // Auto-play
+  if (sdkReady && song.uri) {
+    await playSpotify(song.uri);
+    audioTimer = setTimeout(stopAudioAndWait, durSec * 1000);
+    document.getElementById('audio-bar-wrap').style.display = 'block';
+    document.getElementById('audio-dur').textContent = fmtTime(durSec);
+    startFakeBar();
+  } else if (song.previewUrl) {
+    playPreviewUrl(song.previewUrl, stopAudioAndWait);
+    audioTimer = setTimeout(stopAudioAndWait, durSec * 1000);
+  }
+}
+
+let fakeBarInterval = null;
+function startFakeBar() {
+  let elapsed = 0;
+  clearInterval(fakeBarInterval);
+  fakeBarInterval = setInterval(() => {
+    elapsed += 0.1;
+    const pct = Math.min(100, (elapsed / durSec) * 100);
+    document.getElementById('audio-fill').style.width = pct + '%';
+    document.getElementById('audio-cur').textContent = fmtTime(elapsed);
+    if (pct >= 100) clearInterval(fakeBarInterval);
+  }, 100);
+}
+
+function stopAudioAndWait() {
+  stopAudio();
+  clearInterval(fakeBarInterval);
+}
+
+function showNextHint() {
+  if (hintIdx >= currentHints.length) return;
+  const el = document.getElementById('hb-' + hintIdx);
+  if (el) el.classList.add('show');
+  hintIdx++;
+  if (hintIdx >= currentHints.length) {
+    document.getElementById('btn-hint').style.opacity = '.3';
+  }
+}
+
+async function togglePreview() {
+  const song = queue[currentIdx];
+  const btn = document.getElementById('btn-play-preview');
+  if (audioEl && !audioEl.paused) {
+    stopAudio();
+    btn.textContent = '▶ Écouter';
+    return;
+  }
+  if (sdkReady && song.uri) {
+    await playSpotify(song.uri);
+    btn.textContent = '⏸ Pause';
+    audioTimer = setTimeout(stopAudioAndWait, durSec * 1000);
+    document.getElementById('audio-bar-wrap').style.display = 'block';
+    document.getElementById('audio-dur').textContent = fmtTime(durSec);
+    startFakeBar();
+  } else if (song.previewUrl) {
+    playPreviewUrl(song.previewUrl, () => { btn.textContent = '▶ Écouter'; });
+    audioTimer = setTimeout(stopAudioAndWait, durSec * 1000);
+    btn.textContent = '⏸ Pause';
+  }
+}
+
+function revealSong() {
+  const song = queue[currentIdx];
+  stopAudio();
+  clearInterval(fakeBarInterval);
+
+  document.getElementById('state-hidden').style.display = 'none';
+  document.getElementById('state-revealed').style.display = 'block';
+  document.getElementById('btns-hidden').style.display = 'none';
+  document.getElementById('btns-revealed').style.display = 'flex';
+
+  document.getElementById('rev-title').textContent = song.title;
+  document.getElementById('rev-artist').textContent = song.artist || '';
+
+  // Cover
+  const cover = document.getElementById('rev-cover');
+  if (song.coverUrl) { cover.src = song.coverUrl; cover.style.display = ''; }
+  else cover.style.display = 'none';
+
+  // Meta badges
+  const meta = [];
+  if (song.year) {
+    const [bg,c] = themeColor('year_');
+    meta.push(`<span class="badge" style="background:rgba(232,216,74,.1);color:var(--acc)">📅 ${song.year}</span>`);
+  }
+  song.themes?.forEach(t => {
+    const [bg,c] = themeColor(t);
+    meta.push(`<span class="badge" style="background:${bg};color:${c}">${esc(t)}</span>`);
+  });
+  document.getElementById('rev-meta').innerHTML = meta.join('');
+
+  // Re-play full song for reveal?
+  if (sdkReady && song.uri) {
+    playSpotify(song.uri);
+  }
+}
+
+function nextSong() {
+  stopAudio();
+  clearInterval(fakeBarInterval);
+  currentIdx++;
+  if (currentIdx >= queue.length) { endGame(); return; }
+
+  if (pauseSec > 0) {
+    showPause(pauseSec, () => showQuestion());
+  } else {
+    showQuestion();
+  }
+}
+
+function showPause(secs, onDone) {
+  const overlay = document.getElementById('pause-overlay');
+  const countdown = document.getElementById('pause-countdown');
+  overlay.classList.add('active');
+  let rem = secs;
+  countdown.textContent = rem;
+
+  pauseTimer = setInterval(() => {
+    rem--;
+    countdown.textContent = rem;
+    countdown.style.animation = 'none';
+    countdown.offsetHeight; // reflow
+    countdown.style.animation = 'countPulse .5s ease-in-out';
+    if (rem <= 0) {
+      clearInterval(pauseTimer);
+      overlay.classList.remove('active');
+      onDone();
+    }
+  }, 1000);
+}
+
+function endGame() {
+  stopAudio();
+  document.getElementById('play-game').style.display = 'none';
+  document.getElementById('play-end').classList.add('active');
+  document.getElementById('prog-fill').style.width = '100%';
+}
+
+function resetGame() {
+  document.getElementById('play-end').classList.remove('active');
+  document.getElementById('play-setup').style.display = 'block';
+}
+
+function stopAudio() {
+  if (audioEl) { audioEl.pause(); audioEl.src = ''; audioEl = null; }
+  if (sdkReady) pauseSpotify().catch(() => {});
+  clearTimeout(audioTimer);
+  clearInterval(fakeBarInterval);
+  document.getElementById('audio-bar-wrap').style.display = 'none';
+  document.getElementById('audio-fill').style.width = '0%';
+}
+
+// ══════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'play') { renderThemeGrid(); updateSelCount(); }
+  if (id === 'library') renderLibrary();
+}
+
+// ══════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+load();
+updateAll();
+updateSpotifyStatus();
+updateDur(); updatePause(); updateQty();
+</script>
+</body>
+</html>
