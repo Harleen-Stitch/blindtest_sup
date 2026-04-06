@@ -480,8 +480,8 @@ function parseCSV(text) {
   const aliases = {
     titre: ['titre', 'title', 'track name', 'trackname', 'nom', 'chanson'],
     artiste: ['artiste', 'artist', 'artist names', 'artistes', 'chanteur'],
-    annee: ['annee', 'année' 'year', 'release date', 'releasedate', 'date', 'an'],
-    themes: ['themes', 'theme', 'thème', 'thèmes', 'genre', 'genres', 'categorie', 'categories', 'tags']
+    annee: ['annee', 'year', 'release date', 'releasedate', 'date', 'an'],
+    themes: ['themes', 'theme', 'thèmes', 'genre', 'genres', 'categorie', 'categories', 'tags']
   };
 
   for (const [field, alts] of Object.entries(aliases)) {
