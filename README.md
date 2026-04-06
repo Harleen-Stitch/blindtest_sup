@@ -13,4 +13,4 @@ Code généré par Claude IA
 
 Ce code évoluera en fonction des bugs rencontrés :
 * actuellement, les fonctionnes `tout sélectionner` et `tout désélectionner`sélectionne chaque catégorie
-* la catégories `histoire d'mour`reste bloquée
+* la catégorie `histoire d'mour`reste bloquée
